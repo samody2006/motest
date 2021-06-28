@@ -45,6 +45,17 @@ class User implements UserInterface
     {
         return $this->id;
     }
+    public function getFullname(): ?string
+    {
+        return $this->fullname;
+    }
+
+    public function setFullname(string $fullname): self
+    {
+        $this->fullname = $fullname;
+
+        return $this;
+    }
 
     public function getEmail(): ?string
     {
@@ -122,15 +133,5 @@ class User implements UserInterface
         // $this->plainPassword = null;
     }
 
-    public function getFullname(): ?string
-    {
-        return $this->fullname;
-    }
 
-    public function setFullname(string $fullname): self
-    {
-        $this->fullname = $fullname;
-
-        return $this;
-    }
 }

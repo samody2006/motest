@@ -2,13 +2,17 @@
 
 namespace App\Security;
 
+use App\Entity\LoginAttempt;
 use App\Entity\User;
+use App\Repository\LoginAttemptRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Security;
@@ -30,13 +34,17 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator implements Passw
     private $urlGenerator;
     private $csrfTokenManager;
     private $passwordEncoder;
+    private $loginAttemptRepository;
+    private $router;
 
-    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder,LoginAttemptRepository $loginAttemptRepository, RouterInterface $router)
     {
         $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->loginAttemptRepository = $loginAttemptRepository;
+        $this->router = $router;
     }
 
     public function supports(Request $request)
@@ -56,6 +64,10 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator implements Passw
             Security::LAST_USERNAME,
             $credentials['email']
         );
+        $newLoginAttempt = new LoginAttempt($request->getClientIp(), $credentials['email']);
+
+        $this->entityManager->persist($newLoginAttempt);
+        $this->entityManager->flush();
 
         return $credentials;
     }
@@ -78,9 +90,22 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator implements Passw
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
+              
+               if ($this->loginAttemptRepository->countRecentLoginAttempts($credentials['email']) === 3) {
+               
+                throw new CustomUserMessageAuthenticationException('You have 2 Attempt left');
+               }
+               if ($this->loginAttemptRepository->countRecentLoginAttempts($credentials['email']) === 4) {
+               
+                throw new CustomUserMessageAuthenticationException('You have 1 Attempt left, make sure you check your details well ');
+               }
+               if ($this->loginAttemptRepository->countRecentLoginAttempts($credentials['email']) >= 5 ) {
+               
+                
+                return new RedirectResponse($this->router->generate('blockuser'));
+               
     }
-
+    }
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */
