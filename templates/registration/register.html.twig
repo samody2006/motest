@@ -3,7 +3,7 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-{{ include('inc/navbar.html.twig') }}
+
     {% for flashError in app.flashes('verify_email_error') %}
         <div class="alert alert-danger" role="alert">{{ flashError }}</div>
     {% endfor %}
@@ -17,7 +17,7 @@
             label: 'Password'
         }) }}<br>
         {{ form_row(registrationForm.agreeTerms) }}<br>
-<a  href="/register">Already have an account yet login here </a>
+<a  href="/login">Already have an account yet login here </a>
         <button type="submit" class="btn btn-primary">Register</button>
     {{ form_end(registrationForm) }}
 {% endblock %}

@@ -1,26 +1,35 @@
-<nav class="navbar navbar-expand-sm bg-primary navbar-dark">
-  <!-- Brand -->
-  <a class="navbar-brand" href="#">Logo</a>
+<nav class="navbar navbar-expand-lg navbar-outline-primary bg-light">
 
-  <!-- Links -->
-  <ul class="navbar-nav">
-    <li class="nav-item">
-      <a class="nav-link" href="/">Home</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#">Blank</a>
-    </li>
+  <a class="navbar-brand" href="/">We Friends</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
 
-    <!-- Dropdown -->
-    <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-        Friend List
-      </a>
-      <div class="dropdown-menu">
-        <a class="dropdown-item" href="#">Link 1</a>
-        <a class="dropdown-item" href="#">Link 2</a>
-        <a class="dropdown-item" href="#">Link 3</a>
-      </div>
-    </li>
-  </ul>
-</nav>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Friends List
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          
+        </div>
+      </li>
+
+    </ul>
+    <ul class="nav navbar-right">
+      {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+      <a class="btn btn-outline-primary" href="{{ path('app_logout') }}">Logout</a>
+      {% else %}
+      <li><a class="btn btn-outline-primary" style="margin:3px" href="/register"> Sign Up</a></li>
+      <li><a class="btn btn-outline-primary" style="margin:3px" href="/login"> Login </a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>   
