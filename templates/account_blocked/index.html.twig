@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello BlockuserController!{% endblock %}
+{% block title %}Hello AccountBlockedController!{% endblock %}
 
 {% block body %}
 <style>
@@ -9,11 +9,10 @@
 </style>
 
 <div class="example-wrapper">
-This friendly message is coming from We Friends
+    <h1>Hello {{ controller_name }}! ✅</h1>
 
-    <h1>Hello  ✅ You have been Restricted  for 1 hour after multiple failed login attempts </h1>
-
-    This friendly message is coming from Site
-    
+    You have been block after multiple failed Login attempts
+    <br>
+    Check back after 1 hour
 </div>
 {% endblock %}

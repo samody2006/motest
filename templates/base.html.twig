@@ -4,34 +4,51 @@
   <head>
     <meta charset="UTF-8" />
     <title>{% block title %}Welcome!{% endblock %}</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
-    {% block stylesheets %}{% endblock %}
+    
+    {% block stylesheets %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>{% endblock %}
   </head>
   <body>
-    <nav
-      class="navbar navbar-expand-lg navbar-light bg-light"
-      style="height: 70px;"
-    >
-      <a class="navbar-brand" href="/">We Are Friends</a>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent"></div>
-      <ul class="nav navbar-nav navbar-right">
-        <AmpContent>
-            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-        <li><a class="nav-link" href="#">View List</a></li>
-        <li><a class="nav-link" href="{{ path('app_logout') }}">Logout</a></li>
-        
-</AmpContent>
+<nav class="navbar navbar-expand-lg navbar-outline-primary bg-light">
 
-<NonAmpContent>
-{% else %}
-        <li><a class="nav-link" href="{{ path('app_login') }}">Login</a></li>
-        <li>
-          <a class="nav-link" href="{{ path('app_register') }}">Register</a>
-        </li>
-   {% endif %}     
-</NonAmpContent>
-      </ul>
-    </nav>
-    {% block body %}{% endblock %} {% block javascripts %}{% endblock %}
+  <a class="navbar-brand" href="/">We Friends</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Friends List
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          
+        </div>
+      </li>
+
+    </ul>
+    <ul class="nav navbar-right">
+      {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+      <a class="btn btn-outline-primary" href="{{ path('app_logout') }}">Logout</a>
+      {% else %}
+      <li><a class="btn btn-outline-primary" style="margin:3px" href="/register"> Sign Up</a></li>
+      <li><a class="btn btn-outline-primary" style="margin:3px" href="/login"> Login </a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>   
+    {% block body %}{% endblock %} 
+{% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+{% endblock %}
   </body>
 </html>

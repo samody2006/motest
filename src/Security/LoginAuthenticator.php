@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\IpBlocked;
 use App\Entity\LoginAttempt;
 use App\Entity\User;
 use App\Repository\LoginAttemptRepository;
@@ -9,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
@@ -34,18 +34,18 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator implements Passw
     private $urlGenerator;
     private $csrfTokenManager;
     private $passwordEncoder;
+    private $ipAddress;
     private $loginAttemptRepository;
-    private $router;
 
-    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder,LoginAttemptRepository $loginAttemptRepository, RouterInterface $router)
+    public function __construct(EntityManagerInterface $entityManager,  UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder, LoginAttemptRepository $loginAttemptRepository)
     {
         $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
         $this->loginAttemptRepository = $loginAttemptRepository;
-        $this->router = $router;
-    }
+        
+    } 
 
     public function supports(Request $request)
     {
@@ -64,8 +64,10 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator implements Passw
             Security::LAST_USERNAME,
             $credentials['email']
         );
-        $newLoginAttempt = new LoginAttempt($request->getClientIp(), $credentials['email']);
 
+        $newLoginAttempt = new LoginAttempt($request->getClientIp(), $credentials['email']);
+        $this->ipAddress = $request->getClientIp();
+        
         $this->entityManager->persist($newLoginAttempt);
         $this->entityManager->flush();
 
@@ -88,24 +90,30 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator implements Passw
         return $user;
     }
 
-    public function checkCredentials($credentials, UserInterface $user)
+    public function checkCredentials($credentials,  UserInterface $user )
     {
-              
-               if ($this->loginAttemptRepository->countRecentLoginAttempts($credentials['email']) === 3) {
-               
-                throw new CustomUserMessageAuthenticationException('You have 2 Attempt left');
-               }
-               if ($this->loginAttemptRepository->countRecentLoginAttempts($credentials['email']) === 4) {
-               
-                throw new CustomUserMessageAuthenticationException('You have 1 Attempt left, make sure you check your details well ');
-               }
-               if ($this->loginAttemptRepository->countRecentLoginAttempts($credentials['email']) >= 5 ) {
-               
-                
-                return new RedirectResponse($this->router->generate('blockuser'));
-               
+        if ($this->loginAttemptRepository->countRecentLoginAttempts($credentials['email'])  === 2) {
+        throw new CustomUserMessageAuthenticationException('3 attempts left');
     }
+    if ($this->loginAttemptRepository->countRecentLoginAttempts($credentials['email'])  === 3) {
+        throw new CustomUserMessageAuthenticationException('2 attempts left');
     }
+    if ($this->loginAttemptRepository->countRecentLoginAttempts($credentials['email'])  === 4) {
+        throw new CustomUserMessageAuthenticationException('Be carefull this is your last attempt, Else you wont be able to login until an hour time');
+    }
+    if ($this->loginAttemptRepository->countRecentLoginAttempts($credentials['email'])  >= 5) 
+    {  
+       
+       
+        $blocked = new IpBlocked($ipAddress);
+        $manager->persist($blocked);
+        $manager->flush();
+        return $this->urlGenerator->generate('account_blocked');
+    }
+
+    return  $this->passwordEncoder->isPasswordValid($user,  $credentials['password']);
+}
+
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */
@@ -120,8 +128,8 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator implements Passw
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('home'));
-        //throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+      return new RedirectResponse($this->urlGenerator->generate('home'));
+        // throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 
     protected function getLoginUrl()

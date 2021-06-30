@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -39,34 +41,22 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $fullname;
+    private $name;
 
-    public function getId(): ?int
+    /**
+     * @ORM\OneToMany(targetEntity="Friends", mappedBy="user")
+     */
+    private $friends;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Friends", mappedBy="friend")
+     */
+    private $friendsWithMe;
+
+    public function __construct()
     {
-        return $this->id;
-    }
-    public function getFullname(): ?string
-    {
-        return $this->fullname;
-    }
-
-    public function setFullname(string $fullname): self
-    {
-        $this->fullname = $fullname;
-
-        return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
+        $this->friends = new ArrayCollection();
+        $this->friendsWithMe = new ArrayCollection();
     }
 
     /**
@@ -78,7 +68,7 @@ class User implements UserInterface
     {
         return (string) $this->email;
     }
-
+    
     /**
      * @see UserInterface
      */
@@ -113,6 +103,7 @@ class User implements UserInterface
         return $this;
     }
 
+
     /**
      * Returning a salt is only needed, if you are not using a modern
      * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
@@ -131,6 +122,96 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Friends[]
+     */
+    public function getFriends(): Collection
+    {
+        return $this->friends;
+    }
+
+    public function addFriend(User $friend): self
+    {
+        $fs = new Friends();
+        $fs->setUser($this);
+        $fs->setFriend($friend);
+        $this->addFriends($fs);
+    
+
+        return $this;
+    }
+
+    public function removeFriend(Friends $friend): self
+    {
+        if ($this->friends->removeElement($friend)) {
+            // set the owning side to null (unless already changed)
+            if ($friend->getUser() === $this) {
+                $friend->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Friends[]
+     */
+    public function getFriendsWithMe(): Collection
+    {
+        return $this->friendsWithMe;
+    }
+
+    public function addFriendsWithMe(Friends $friendsWithMe): self
+    {
+        if (!$this->friendsWithMe->contains($friendsWithMe)) {
+            $this->friendsWithMe[] = $friendsWithMe;
+            $friendsWithMe->setFriend($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFriendsWithMe(Friends $friendsWithMe): self
+    {
+        if ($this->friendsWithMe->removeElement($friendsWithMe)) {
+            // set the owning side to null (unless already changed)
+            if ($friendsWithMe->getFriend() === $this) {
+                $friendsWithMe->setFriend(null);
+            }
+        }
+
+        return $this;
     }
 
 

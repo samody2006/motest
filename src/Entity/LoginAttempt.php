@@ -9,17 +9,16 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=LoginAttemptRepository::class)
  */
 class LoginAttempt
-
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=50, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $ipAddress;
 
@@ -28,17 +27,14 @@ class LoginAttempt
      */
     private $date;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $email;
-
-    public function __construct(?string $ipAddress, ?string $email)
+    public function __construct(string $ipAddress, string $email)
     {
+        date_default_timezone_set('Africa/Lagos');
         $this->ipAddress = $ipAddress;
         $this->email = $email;
         $this->date = new \DateTimeImmutable('now');
     }
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -61,23 +57,10 @@ class LoginAttempt
         return $this->date;
     }
 
-    public function setDate(\DateTimeImmutable $date): self
+    public function setDate(?\DateTimeImmutable $date): self
     {
         $this->date = $date;
 
         return $this;
     }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(?string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
 }

@@ -21,25 +21,21 @@ class LoginAttemptRepository extends ServiceEntityRepository
         parent::__construct($registry, LoginAttempt::class);
     }
 
-public function countRecentLoginAttempts(string $email): int
+    public function countRecentLoginAttempts(string $email)
     {
+        date_default_timezone_set('Africa/Lagos');
         $timeAgo = new \DateTimeImmutable(sprintf('-%d minutes', self::DELAY_IN_MINUTES));
 
-        return $this->createQueryBuilder('la')
-            ->select('COUNT(la)')
-            ->where('la.date >= :date')
-            ->andWhere('la.email = :email')
+        return $this->createQueryBuilder('l')
+            ->select('COUNT(l)')
+            ->andWhere('l.date >= :date')
+            ->andWhere('l.email = :email')
+            ->setParameter('date', $timeAgo)
+            ->setParameter('email', $email)
             ->getQuery()
-            ->setParameters([
-                'date' => $timeAgo,
-                'email' => $email,
-            ])
-            ->getSingleScalarResult()
+            ->getResult()
         ;
     }
-
-
-
     // /**
     //  * @return LoginAttempt[] Returns an array of LoginAttempt objects
     //  */

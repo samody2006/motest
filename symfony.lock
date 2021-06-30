@@ -15,7 +15,7 @@
         ]
     },
     "doctrine/cache": {
-        "version": "1.11.3"
+        "version": "2.0.3"
     },
     "doctrine/collections": {
         "version": "1.6.7"
@@ -24,7 +24,7 @@
         "version": "3.1.2"
     },
     "doctrine/dbal": {
-        "version": "2.13.1"
+        "version": "2.13.2"
     },
     "doctrine/deprecations": {
         "version": "v0.5.3"
@@ -71,10 +71,10 @@
         "version": "1.2.1"
     },
     "doctrine/migrations": {
-        "version": "3.1.2"
+        "version": "3.1.4"
     },
     "doctrine/orm": {
-        "version": "2.9.2"
+        "version": "2.9.3"
     },
     "doctrine/persistence": {
         "version": "2.2.1"
@@ -89,13 +89,7 @@
         "version": "v1.0.5"
     },
     "laminas/laminas-code": {
-        "version": "4.3.0"
-    },
-    "laminas/laminas-eventmanager": {
-        "version": "3.3.1"
-    },
-    "laminas/laminas-zendframework-bridge": {
-        "version": "1.2.0"
+        "version": "4.4.0"
     },
     "monolog/monolog": {
         "version": "1.26.1"
@@ -145,7 +139,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "master",
             "version": "9.3",
-            "ref": "8b7e50ac5f82e6d41bad88344f7e868c02ae1af5"
+            "ref": "68450b8fef6804047d9424c55d758c28b4340791"
         },
         "files": [
             "./.env.test",
@@ -190,7 +184,7 @@
         "version": "4.0.3"
     },
     "sebastian/global-state": {
-        "version": "5.0.2"
+        "version": "5.0.3"
     },
     "sebastian/lines-of-code": {
         "version": "1.0.3"
@@ -208,7 +202,7 @@
         "version": "3.0.3"
     },
     "sebastian/type": {
-        "version": "2.3.2"
+        "version": "2.3.4"
     },
     "sebastian/version": {
         "version": "3.0.2"
@@ -415,7 +409,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "master",
             "version": "5.3",
-            "ref": "05aa34fc27227a46bb75872b0efff102bd7d77e0"
+            "ref": "0a3b084605bd384975df457a20e9f41ca09fd4ed"
         },
         "files": [
             "./.env.test",

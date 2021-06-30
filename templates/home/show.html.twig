@@ -1,0 +1,16 @@
+  
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ user.name }}{% endblock %}
+
+{% block body %}
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">{{ user.name }}</h5>
+    <p class="card-text">{{ user.email }}</p>
+    <a href="/" class="card-link">Go Back</a>
+    <a href="/addFriend/{id}"  class="card-link">Add as Friend</a>
+  </div>
+</div>
+ 
+{% endblock %}
