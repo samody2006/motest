@@ -26,14 +26,16 @@ class LoginAttemptRepository extends ServiceEntityRepository
         date_default_timezone_set('Africa/Lagos');
         $timeAgo = new \DateTimeImmutable(sprintf('-%d minutes', self::DELAY_IN_MINUTES));
 
-        return $this->createQueryBuilder('l')
-            ->select('COUNT(l)')
-            ->andWhere('l.date >= :date')
-            ->andWhere('l.email = :email')
-            ->setParameter('date', $timeAgo)
-            ->setParameter('email', $email)
+        return $this->createQueryBuilder('la')
+            ->select('COUNT(la)')
+            ->where('la.date >= :date')
+            ->andWhere('la.email = :email')
             ->getQuery()
-            ->getResult()
+            ->setParameters([
+                'date' => $timeAgo,
+                'email' => $email,
+            ])
+            ->getSingleScalarResult()
         ;
     }
     // /**

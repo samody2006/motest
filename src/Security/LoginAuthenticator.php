@@ -2,7 +2,7 @@
 
 namespace App\Security;
 
-use App\Entity\IpBlocked;
+
 use App\Entity\LoginAttempt;
 use App\Entity\User;
 use App\Repository\LoginAttemptRepository;
@@ -34,7 +34,6 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator implements Passw
     private $urlGenerator;
     private $csrfTokenManager;
     private $passwordEncoder;
-    private $ipAddress;
     private $loginAttemptRepository;
 
     public function __construct(EntityManagerInterface $entityManager,  UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder, LoginAttemptRepository $loginAttemptRepository)
@@ -90,31 +89,15 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator implements Passw
         return $user;
     }
 
-    public function checkCredentials($credentials,  UserInterface $user )
+    public function checkCredentials($credentials, UserInterface $user)
     {
-        if ($this->loginAttemptRepository->countRecentLoginAttempts($credentials['email'])  === 2) {
-        throw new CustomUserMessageAuthenticationException('3 attempts left');
+        if ($this->loginAttemptRepository->countRecentLoginAttempts($credentials['email'])  >= 5)  {
+        throw new CustomUserMessageAuthenticationException('Too many failed attempt, try again after 1 Hour');
     }
-    if ($this->loginAttemptRepository->countRecentLoginAttempts($credentials['email'])  === 3) {
-        throw new CustomUserMessageAuthenticationException('2 attempts left');
-    }
-    if ($this->loginAttemptRepository->countRecentLoginAttempts($credentials['email'])  === 4) {
-        throw new CustomUserMessageAuthenticationException('Be carefull this is your last attempt, Else you wont be able to login until an hour time');
-    }
-    if ($this->loginAttemptRepository->countRecentLoginAttempts($credentials['email'])  >= 5) 
-    {  
-       
-        if(isset($_GET['ipAddress']))
-        $blocked = new IpBlocked($ipAddress);
-        if(isset($_GET['blocked']))
-        $this->entityManager->persist($blocked);
-        $this->entityManager->flush();
-
- 
+    
     return  $this->passwordEncoder->isPasswordValid($user,  $credentials['password']);
 }
-    return $this->urlGenerator->generate('account_blocked');
-}
+
 
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
