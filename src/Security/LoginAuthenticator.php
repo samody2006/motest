@@ -104,14 +104,16 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator implements Passw
     if ($this->loginAttemptRepository->countRecentLoginAttempts($credentials['email'])  >= 5) 
     {  
        
-       
+        if(isset($_GET['ipAddress']))
         $blocked = new IpBlocked($ipAddress);
-        $manager->persist($blocked);
-        $manager->flush();
-        return $this->urlGenerator->generate('account_blocked');
-    }
+        if(isset($_GET['blocked']))
+        $this->entityManager->persist($blocked);
+        $this->entityManager->flush();
 
+ 
     return  $this->passwordEncoder->isPasswordValid($user,  $credentials['password']);
+}
+    return $this->urlGenerator->generate('account_blocked');
 }
 
     /**
