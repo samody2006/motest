@@ -17,10 +17,17 @@ class LoginAttempt
      */
     private $id;
 
+        /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $email;
+
+
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $ipAddress;
+    
 
     /**
      * @ORM\Column(type="datetime_immutable")
@@ -34,7 +41,7 @@ class LoginAttempt
         $this->email = $email;
         $this->date = new \DateTimeImmutable('now');
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +67,18 @@ class LoginAttempt
     public function setDate(?\DateTimeImmutable $date): self
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }
